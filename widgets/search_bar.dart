@@ -21,15 +21,15 @@ class CustomSearchBar extends StatelessWidget {
       height: 45,
       child: Container(
         decoration: BoxDecoration(
-          color: AppColors.surface,
-          borderRadius: BorderRadius.circular(12),
-          border: Border.all(color: AppColors.border),
+          color: Theme.of(context).colorScheme.primary,
+          borderRadius: BorderRadius.circular(15),
         ),
         child: TextField(
           controller: controller,
           onChanged: onChanged,
           onSubmitted: onSubmitted,
           decoration: InputDecoration(
+            fillColor: Theme.of(context).colorScheme.tertiary,
             hintText: hintText ?? 'Search...',
             hintStyle: TextStyle(color: AppColors.textLight),
             prefixIcon: Icon(Icons.search, color: AppColors.textSecondary),
@@ -37,6 +37,14 @@ class CustomSearchBar extends StatelessWidget {
             contentPadding: const EdgeInsets.symmetric(
               horizontal: 16,
               vertical: 12,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none,
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(15),
+              borderSide: BorderSide.none,
             ),
           ),
         ),

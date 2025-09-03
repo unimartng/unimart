@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
-import 'constants/app_theme.dart';
+import 'package:unimart/constants/theme_provider.dart';
+import 'package:unimart/screens/splash/splash_screen.dart';
 import 'constants/supabase_config.dart';
 import 'services/auth_provider.dart';
 import 'services/navigation_service.dart';
@@ -17,7 +18,10 @@ void main() async {
 
   runApp(
     MultiProvider(
-      providers: [ChangeNotifierProvider(create: (_) => AuthProvider())],
+      providers: [
+        ChangeNotifierProvider(create: (context) => ThemeProvider()),
+        ChangeNotifierProvider(create: (_) => AuthProvider()),
+      ],
       child: const UnimartApp(),
     ),
   );
@@ -48,11 +52,29 @@ class _UnimartAppState extends State<UnimartApp> {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp.router(
-      title: 'Unimart',
-      theme: AppTheme.lightTheme,
-      routerConfig: NavigationService.router,
-      debugShowCheckedModeBanner: false,
+    return Consumer2<AuthProvider, ThemeProvider>(
+      builder: (context, authProvider, themeProvider, _) {
+        final theme = themeProvider.themeData;
+        
+        if (authProvider.isLoading) {
+          // Show splash/loading screen while checking auth state
+          return MaterialApp(
+            theme: theme,
+            home: Scaffold(
+              backgroundColor: theme.scaffoldBackgroundColor,
+              body: Center(child: SplashScreen()),
+            ),
+            debugShowCheckedModeBanner: false,
+          );
+        }
+        // Show the real app after loading
+        return MaterialApp.router(
+          title: 'Unimart',
+          theme: theme,
+          routerConfig: NavigationService.router,
+          debugShowCheckedModeBanner: false,
+        );
+      },
     );
   }
 }

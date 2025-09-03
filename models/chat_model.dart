@@ -19,7 +19,7 @@ class ChatModel {
     required this.updatedAt,
     this.lastMessage,
     this.otherUser,
-    this.unreadCount = 0,
+    required this.unreadCount,
   });
 
   factory ChatModel.fromJson(Map<String, dynamic> json) {

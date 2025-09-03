@@ -1,9 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
+import 'package:unimart/widgets/loading_widget.dart';
 import '../models/product_model.dart';
 import '../constants/app_colors.dart';
 import '../screens/product/product_detail_screen.dart';
 import '../services/supabase_service.dart';
+import '../screens/profile/user_profile_screen.dart';
 
 class ProductCard extends StatefulWidget {
   final ProductModel product;
@@ -102,13 +104,14 @@ class _ProductCardState extends State<ProductCard> {
         }
       },
       child: Container(
+        width: 190,
         decoration: BoxDecoration(
-          color: AppColors.background,
+          color: Theme.of(context).colorScheme.tertiary,
           borderRadius: BorderRadius.circular(16),
           boxShadow: [
             BoxShadow(
-              color: AppColors.shadow,
-              blurRadius: 8,
+              color: Colors.black.withOpacity(0.1),
+              blurRadius: 10,
               offset: const Offset(0, 2),
             ),
           ],
@@ -142,9 +145,14 @@ class _ProductCardState extends State<ProductCard> {
                                 imageUrl: widget.product.imageUrls.first,
                                 fit: BoxFit.cover,
                                 placeholder: (context, url) => Container(
-                                  color: AppColors.surface,
-                                  child: const Center(
-                                    child: CircularProgressIndicator(),
+                                  color: Theme.of(context).colorScheme.tertiary,
+                                  child: Center(
+                                    child: LoadingIndicator(
+                                      message: 'Loading...',
+                                      color: Theme.of(
+                                        context,
+                                      ).colorScheme.primary,
+                                    ),
                                   ),
                                 ),
                                 errorWidget: (context, url, error) => Container(
@@ -188,7 +196,7 @@ class _ProductCardState extends State<ProductCard> {
                           style: Theme.of(context).textTheme.titleSmall
                               ?.copyWith(
                                 fontWeight: FontWeight.w600,
-                                color: AppColors.textPrimary,
+                                color: Theme.of(context).colorScheme.primary,
                                 fontSize: 15,
                               ),
                           maxLines: 1,
@@ -202,6 +210,7 @@ class _ProductCardState extends State<ProductCard> {
                               ?.copyWith(
                                 fontWeight: FontWeight.bold,
                                 color: AppColors.primaryOrange,
+                                fontSize: 14,
                               ),
                         ),
 
@@ -210,30 +219,66 @@ class _ProductCardState extends State<ProductCard> {
                           Row(
                             children: [
                               CircleAvatar(
-                                radius: 8,
-                                backgroundColor: AppColors.primaryBlue,
-                                child: Text(
-                                  widget.product.seller!.name.isNotEmpty
-                                      ? widget.product.seller!.name[0]
-                                            .toUpperCase()
-                                      : '?',
-                                  style: const TextStyle(
-                                    color: Colors.white,
-                                    fontSize: 10,
-                                    fontWeight: FontWeight.bold,
-                                  ),
-                                ),
+                                radius: 12,
+                                backgroundImage:
+                                    (widget.product.seller!.profilePhotoUrl !=
+                                            null &&
+                                        widget
+                                            .product
+                                            .seller!
+                                            .profilePhotoUrl!
+                                            .isNotEmpty)
+                                    ? NetworkImage(
+                                        widget.product.seller!.profilePhotoUrl!,
+                                      )
+                                    : null,
+                                child:
+                                    (widget.product.seller!.profilePhotoUrl ==
+                                            null ||
+                                        widget
+                                            .product
+                                            .seller!
+                                            .profilePhotoUrl!
+                                            .isEmpty)
+                                    ? Text(
+                                        widget.product.seller!.name.isNotEmpty
+                                            ? widget.product.seller!.name[0]
+                                                  .toUpperCase()
+                                            : '',
+                                        style: TextStyle(
+                                          fontSize: 14,
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                      )
+                                    : null,
                               ),
                               const SizedBox(width: 4),
                               Expanded(
-                                child: Text(
-                                  widget.product.seller!.name,
-                                  style: Theme.of(context).textTheme.bodySmall
-                                      ?.copyWith(
-                                        color: AppColors.textSecondary,
+                                child: GestureDetector(
+                                  onTap: () {
+                                    Navigator.push(
+                                      context,
+                                      MaterialPageRoute(
+                                        builder: (context) => UserProfileScreen(
+                                          userId: widget.product.seller!.id,
+                                          userName: widget.product.seller!.name,
+                                        ),
                                       ),
-                                  maxLines: 1,
-                                  overflow: TextOverflow.ellipsis,
+                                    );
+                                  },
+                                  child: Text(
+                                    widget.product.seller!.name,
+                                    style: Theme.of(context).textTheme.bodySmall
+                                        ?.copyWith(
+                                          color: Theme.of(
+                                            context,
+                                          ).colorScheme.primary,
+                                        ),
+                                    maxLines: 1,
+                                    overflow: TextOverflow.ellipsis,
+                                  ),
                                 ),
                               ),
                             ],
@@ -254,7 +299,8 @@ class _ProductCardState extends State<ProductCard> {
                             widget.product.category,
                             style: Theme.of(context).textTheme.bodySmall
                                 ?.copyWith(
-                                  color: AppColors.primaryBlue,
+                                  color: AppColors.primaryOrange,
+                                  fontSize: 10,
                                   fontWeight: FontWeight.w500,
                                 ),
                           ),
@@ -265,16 +311,86 @@ class _ProductCardState extends State<ProductCard> {
                 ),
               ],
             ),
+
+            // Featured Badge
+            if (widget.product.isFeatured &&
+                widget.product.featuredUntil != null &&
+                widget.product.featuredUntil!.isAfter(DateTime.now()))
+              Positioned(
+                top: 8,
+                right: 8,
+                child: Container(
+                  padding: const EdgeInsets.symmetric(
+                    horizontal: 8,
+                    vertical: 4,
+                  ),
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      colors: [
+                        AppColors.primaryOrange,
+                        AppColors.primaryOrange.withOpacity(0.8),
+                      ],
+                    ),
+                    borderRadius: BorderRadius.circular(12),
+                    boxShadow: [
+                      BoxShadow(
+                        color: AppColors.primaryOrange.withOpacity(0.3),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Icon(Icons.star, color: Colors.white, size: 12),
+                      const SizedBox(width: 4),
+                      Text(
+                        'Featured',
+                        style: Theme.of(context).textTheme.bodySmall?.copyWith(
+                          color: Colors.white,
+                          fontSize: 10,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+
             // Favorite Button
             Positioned(
-              top: 2,
-              right: 1,
-              child: IconButton(
-                icon: Icon(
-                  _isFavorite ? Icons.favorite : Icons.favorite_border,
-                  color: _isFavorite ? AppColors.primaryBlue : Colors.grey,
+              top: 8,
+              left: 8,
+              child: GestureDetector(
+                onTap: _toggleFavorite,
+                child: Container(
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Theme.of(context).colorScheme.tertiary,
+                    shape: BoxShape.circle,
+                    boxShadow: [
+                      BoxShadow(
+                        color: Colors.black.withOpacity(0.1),
+                        blurRadius: 4,
+                        offset: const Offset(0, 2),
+                      ),
+                    ],
+                  ),
+                  child: _loading
+                      ? const SizedBox(
+                          width: 16,
+                          height: 16,
+                          child: CircularProgressIndicator(strokeWidth: 2),
+                        )
+                      : Icon(
+                          _isFavorite ? Icons.favorite : Icons.favorite_border,
+                          color: _isFavorite
+                              ? AppColors.primaryOrange
+                              : Colors.grey[600],
+                          size: 16,
+                        ),
                 ),
-                onPressed: _loading ? null : _toggleFavorite,
               ),
             ),
           ],

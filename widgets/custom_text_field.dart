@@ -44,6 +44,7 @@ class CustomTextField extends StatelessWidget {
     this.enabled = true,
     this.readOnly = false,
     this.autofocus = false,
+    required FocusNode focusNode,
   });
 
   @override
@@ -65,6 +66,7 @@ class CustomTextField extends StatelessWidget {
       decoration: InputDecoration(
         labelText: labelText,
         hintText: hintText,
+
         helperText: helperText,
         errorText: errorText,
         prefixIcon: prefixIcon,
@@ -96,7 +98,7 @@ class CustomTextField extends StatelessWidget {
           vertical: 12,
         ),
         labelStyle: TextStyle(color: AppColors.textSecondary),
-        hintStyle: TextStyle(color: AppColors.textLight),
+        hintStyle: TextStyle(color: AppColors.textLight, fontSize: 15),
       ),
     );
   }

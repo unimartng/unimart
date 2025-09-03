@@ -12,6 +12,8 @@ class ProductModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   final bool isSold;
+  final bool isFeatured;
+  final DateTime? featuredUntil;
   final UserModel? seller;
 
   ProductModel({
@@ -26,12 +28,14 @@ class ProductModel {
     required this.createdAt,
     required this.updatedAt,
     this.isSold = false,
+    this.isFeatured = false,
+    this.featuredUntil,
     this.seller,
   });
 
   factory ProductModel.fromJson(Map<String, dynamic> json) {
     return ProductModel(
-      id: json['id'] ?? '',
+      id: json['id'] as String?,
       userId: json['user_id'] ?? '',
       title: json['title'] ?? '',
       description: json['description'] ?? '',
@@ -46,6 +50,10 @@ class ProductModel {
         json['updated_at'] ?? DateTime.now().toIso8601String(),
       ),
       isSold: json['is_sold'] ?? false,
+      isFeatured: json['is_featured'] ?? false,
+      featuredUntil: (json['featured_until'] as String?) != null
+          ? DateTime.tryParse(json['featured_until'] as String)
+          : null,
       seller: json['seller'] != null
           ? UserModel.fromJson(json['seller'])
           : null,
@@ -64,9 +72,11 @@ class ProductModel {
       'created_at': createdAt.toIso8601String(),
       'updated_at': updatedAt.toIso8601String(),
       'is_sold': isSold,
+      'is_featured': isFeatured,
+      'featured_until': featuredUntil?.toIso8601String(),
     };
     if (id != null && id!.isNotEmpty) {
-      map['id'] = id as String;
+      map['id'] = id!;
     }
     return map;
   }
@@ -83,6 +93,8 @@ class ProductModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isSold,
+    bool? isFeatured,
+    DateTime? featuredUntil,
     UserModel? seller,
   }) {
     return ProductModel(
@@ -97,6 +109,8 @@ class ProductModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isSold: isSold ?? this.isSold,
+      isFeatured: isFeatured ?? this.isFeatured,
+      featuredUntil: featuredUntil ?? this.featuredUntil,
       seller: seller ?? this.seller,
     );
   }
