@@ -35,11 +35,18 @@ dependencies:
   cupertino_icons: ^1.0.8
   google_fonts: ^6.2.1
   flutter_svg: ^2.2.0
+  lucide_icons: ^0.257.0
+  flutter_launcher_icons: ^0.14.4
+  
   
   # State Management
   provider: ^6.1.5
   shared_preferences: ^2.5.3
   path: ^1.9.0
+  geolocator: ^14.0.2
+  permission_handler: ^12.0.1
+  device_info_plus: ^11.5.0
+  package_info_plus: ^8.3.1
   
   # Supabase
   supabase_flutter: ^2.9.1
@@ -53,11 +60,19 @@ dependencies:
   
   # Navigation
   go_router: ^16.0.0
+  share_plus: ^12.0.0
   
   # Utilities
   intl: ^0.20.2
   uuid: ^4.5.1
   url_launcher: ^6.3.2
+  connectivity_plus: ^6.1.2
+
+  
+  # Push Notifications
+  firebase_core: ^3.6.0
+  firebase_messaging: ^15.1.3
+  flutter_local_notifications: ^18.0.1
   
   # UI Components
   shimmer: ^3.0.0
@@ -116,3 +131,11 @@ flutter:
   #
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
+
+
+flutter_icons:
+  android: true
+  ios: true
+  image_path: "assets/images/unimart.png"
+  adaptive_icon_background: "#FFFFFF" # for Android adaptive icons
+  adaptive_icon_foreground: "assets/images/unimart.png" # for Android adaptive icons

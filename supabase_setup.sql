@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS public.products (
     condition_type TEXT DEFAULT 'good' CHECK (condition_type IN ('new', 'like_new', 'good', 'fair', 'poor')),
     is_sold BOOLEAN DEFAULT FALSE,
     is_featured BOOLEAN DEFAULT FALSE,
+    featured_until TIMESTAMP WITH TIME ZONE,
     views_count INTEGER DEFAULT 0,
     created_at TIMESTAMP WITH TIME ZONE DEFAULT NOW(),
     updated_at TIMESTAMP WITH TIME ZONE DEFAULT NOW()
